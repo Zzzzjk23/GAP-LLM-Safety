@@ -1,37 +1,33 @@
-
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 import sys
+
 from gap_easyjailbreak.attacker.TAP_Mehrotra_2023_debug import TAP
 
 from easyjailbreak.datasets import JailbreakDataset
-from easyjailbreak.models.huggingface_model import from_pretrained
 from easyjailbreak.models.openai_model import OpenaiModel
 
-from gap_easyjailbreak.models.bedrock_mistral_model import MistralModel
-
-from easyjailbreak.datasets import JailbreakDataset
-from easyjailbreak.models.huggingface_model import HuggingfaceModel
-from transformers import AutoTokenizer, AutoModelForCausalLM
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["OPENAI_BASE_URL"] = "https://api.tokenfactory.nebius.com/v1/"
 
 sys.path.append(os.getcwd())
 dataset_name_or_path = '../easyjailbreak/datasets/data/advbench_subset.json'
 dataset = JailbreakDataset(local_file_type='json', dataset=dataset_name_or_path)
 
 
-openai_key = os.environ["OPENAI_KEY"]
+openai_key = "v1.CmQKHHN0YXRpY2tleS1lMDBxMDN4MHl3d3FlZ2Q4cDkSIXNlcnZpY2VhY2NvdW50LWUwMHdwcWpmYWcwNXp6YTRrZzIMCMrxgcoGEPyfrr0DOgwIy_SZlQcQgIyNngJAAloDZTAw.AAAAAAAAAAFZJjga8wP8uscjRXekw5wFdE2ySYvpwKLD-pH8KlRyKUYypqrhqdunKX2HlZ7svbE61JCwPV0gTI3eXy-3Z7AG"
 
-# attack_model = OpenaiModel(model_name=attack_model_name, api_keys=openai_key)
-attack_model = MistralModel(model_name="mistral.mistral-large-2407-v1:0")
-
-eval_model_name = 'gpt-4'
-openai_key = os.environ["OPENAI_KEY"]
-
-# target_model = from_pretrained(target_model_path, model_name=target_model_name)
-target_model = OpenaiModel(model_name='gpt-3.5-turbo', api_keys=openai_key)
-# attack_model = from_pretrained(attack_model_path, model_name=attack_model_name)
-attack_model = OpenaiModel(model_name='gpt-4', api_keys=openai_key)
-eval_model = OpenaiModel(model_name=eval_model_name, api_keys=openai_key)
+attack_model = OpenaiModel(
+    model_name="Qwen/Qwen3-Coder-480B-A35B-Instruct",
+    api_keys=openai_key,
+)
+eval_model = OpenaiModel(
+    model_name="moonshotai/Kimi-K2-Instruct",
+    api_keys=openai_key,
+)
+target_model = OpenaiModel(
+    model_name="openai/gpt-oss-20b",
+    api_keys=openai_key,
+)
 
 dataset_name = 'TAP_Atk_Mis_Evl_GPT4_Tgt_GPT35_D_AdvBench_all'
 # dataset_name = 'TAP_Atk_Vic_Evl_GPT4_Tgt_GPT35_D_AdvBench_all'
